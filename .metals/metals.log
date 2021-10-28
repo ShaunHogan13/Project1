@@ -2098,3 +2098,4 @@ Caused by: java.lang.IllegalArgumentException: 202 is not a valid line number, a
 [0m2021.10.28 11:38:41 WARN  no build target for: C:\Users\shaun\OneDrive\Documents\GitHub\Project1\AccountManager.scala[0m
 Oct 28, 2021 11:38:53 AM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
 INFO: Unsupported notification method: $/setTrace
+[0m2021.10.28 11:42:48 WARN  no build target for: C:\Users\shaun\OneDrive\Documents\GitHub\Project1\AccountManager.scala[0m
