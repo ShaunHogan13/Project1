@@ -33,7 +33,7 @@ case class Prompt(
 
 
 ////This is a repository test 11:42AM 10/28/2021
-object AccountManager {
+object AccountsManager {
 
   
   var allAccounts = ListBuffer(
