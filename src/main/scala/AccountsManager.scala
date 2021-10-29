@@ -15,136 +15,178 @@ import java.nio.charset.StandardCharsets
 import java.io.FileWriter
 
 import java.io.PrintWriter
+import java.util.Calendar;
 
 
-case class Person(
+case class Account(
     var fname: String,
     var lname: String,
     var username: String,
     var password: String,
-    var balance: Float
+    var id: Int,
+    var admin: Boolean
 )
 
 case class Prompt(
     promptTitle: String,
     promptText: String,
-    options: List[String]
+    options: List[PromptOption]
+)
+
+case class PromptOption(
+    displayedText: String,
+    methodName: String,
+    argument: String
+
 )
 
 
 ////This is a repository test 11:42AM 10/28/2021
 object AccountsManager {
 
+    def SetUp(){
+        
+
+
+        println("V S A - Vanquish Sports Analysis")
+        TakeAction(GetPrompt("Begin"), -1)
+        
+    }
   
   var allAccounts = ListBuffer(
-    Person("Shaun", "Hogan", "user", "pw", 5f),
-    Person("Jake", "Rake", "JakeTheRake", "FallColors", 5f),
-    Person("Jane", "Rain", "JaneTheRain", "SpringShowers", 100f),
-    Person("Same", "Pain", "SameThePain", "WinterBoots", 1000f),
-    Person("Jahuluba", "Aah", "JahulubaTheAah", "SummerHeat", 780f)
+    Account("Shaun", "Hogan", "user", "pw", 0, true),
+    Account("Stan", "Man", "user2", "pw", 1, false),
+    Account("Brad", "Mad", "user3", "pw", 2, false),
+    Account("Emma", "Dilemma", "user4", "pw", 3, false)
+
+    
   )
 
   // mongod --dbpath="C:\data\db"
   //mongo
 
   var running = true;
-  var user = Person("", "", "", "", 0);
+  var user = Account("", "", "", "", 0, false);
   var currentUserIndex = -1;
 //("","","","",0);
 
   val allPrompts = Seq(
     Prompt(
       "Begin",
-      "Welcome to TDROTC National Bank!",
-      List[String](
-        "Login",
-        "Create",
-        "Quit",
-        "Print Accounts",
-        "Replace With Fake Data",
-        "Load Accounts from DB",
-        "Save to DB",
-        "Get Average Balance"
+      "Menu",
+      List[PromptOption](
+        PromptOption("Login", "Login", ""),
+        PromptOption("Create an account", "Create", ""),
+        PromptOption("Quit", "Quit", "")
       )
     ),
     
     Prompt("Login", "Login", null),
-    Prompt("Success", "", List[String]("Menu")),
-    Prompt("Fail", "Invalid Login", List[String]("Begin")),
-    Prompt("Log Out", "Logging Out.", List[String]("Begin")),
-    Prompt("Print Accounts", "Printing all Accounts", List[String]("Begin")),
-    // Prompt("Save Accounts", "Saving all accounts to database", List[String]("Begin")),
-    Prompt("Replace With Fake Data", "", List[String]("Begin")),
+    Prompt("Success", "",  List[PromptOption](
+        PromptOption("Menu", "Menu", ""))),
+    Prompt("Fail", "Invalid Login", List[PromptOption](
+        PromptOption("Begin","Begin", ""))),
+    Prompt("Log Out", "Logging Out.", List[PromptOption](
+        PromptOption("Begin","Begin", ""))),
+    Prompt("Print Accounts", "Printing all Accounts", List[PromptOption](
+        PromptOption("Begin","Begin", ""))),
+    Prompt("Replace With Fake Data", "", List[PromptOption](
+        PromptOption("Begin","Begin", ""))),
     Prompt("Quit", "Thanks for banking with TDROTC National Bank!", null),
     Prompt(
       "Menu",
       "Please choose from the following options:",
-      List[String]("Deposit", "Withdraw", "View Balance", "Log Out", "Quit")
+      List[PromptOption](
+        PromptOption("Query", "StartQuery", ""),
+        PromptOption("Log Out", "Log Out", ""),
+        PromptOption("Quit", "Quit", ""),
+        PromptOption("Manage Account", "ManageAccount", ""))
     ),
     Prompt(
-      "Deposit",
-      "Please choose the amount to deposit:\n",
-      List[String](
-        "Deposit Custom Amount",
-        "Deposit $10",
-        "Deposit $20",
-        "Deposit $50",
-        "Deposit $100",
-        "Deposit $500",
-        "Menu",
-        "Quit"
-      )
-    ),
-    Prompt(
-      "Withdraw",
-      "Please choose the amount to withdraw:\n",
-      List[String](
-        "Withdraw Custom Amount",
-        "Withdraw $10",
-        "Withdraw $20",
-        "Withdraw $50",
-        "Withdraw $100",
-        "Withdraw $500",
-        "Menu",
-        "Quit"
-      )
-    ),
-    Prompt("Deposit Custom Amount", "", List[String]("View Balance")),
-    Prompt("Withdraw Custom Amount", "", List[String]("View Balance")),
-    Prompt("D_Success", "Deposit Succesful.", null),
-    Prompt("W_Success", "Withdrawal Succesful.", null),
-    Prompt("D_Fail", "Deposit Not Succesful.", null),
-    Prompt("W_Fail", "Withdrawal Not Succesful.", null),
-    Prompt("View Balance", "", List[String]("Menu")),
-    Prompt("Create", "Create Account", null),
-    Prompt("Deposit $10", "", List[String]("View Balance")),
-    Prompt("Deposit $20", "", List[String]("View Balance")),
-    Prompt("Deposit $50", "", List[String]("View Balance")),
-    Prompt("Deposit $100", "", List[String]("View Balance")),
-    Prompt("Deposit $500", "", List[String]("View Balance")),
-    Prompt("Withdraw $10", "", List[String]("View Balance")),
-    Prompt("Withdraw $20", "", List[String]("View Balance")),
-    Prompt("Withdraw $50", "", List[String]("View Balance")),
-    Prompt("Withdraw $100", "", List[String]("View Balance")),
-    Prompt("Withdraw $500", "", List[String]("View Balance")),
-    Prompt("Load Accounts from DB", "", List[String]("Begin")),
-    Prompt("Save to DB", "SaveAccounts", List[String]("Begin")),
+      "StartQuery",
+      "Please choose what sport you want to query:",
+      List[PromptOption](
+        PromptOption("MLB", "SelectSport", "MLB"),
+        PromptOption("NFL", "SelectSport", "NFL"),
+        PromptOption("NBA", "SelectSport", "NBA"),
+        PromptOption("All Leagues", "SelectSport", "All"),
 
-    Prompt("Get Average Balance", "", List[String]("Begin"))
+        PromptOption("Menu", "Menu", ""),
+        PromptOption("Quit", "Quit", ""))),
+    Prompt(
+      "Get Duration",
+      "Please choose the duration:",
+          List[PromptOption](
+        PromptOption("24 Hours", "SelectDuration", "24"),
+        PromptOption("48 Hours", "SelectDuration",  "48"),
+        PromptOption("One Week", "SelectDuration",  "" + (24 * 7)),
+        PromptOption("Two Weeks", "SelectDuration",  "" + (24 * 14)),
+        PromptOption("One Month", "SelectDuration",  "" + (24 * 30)),
+        PromptOption("Two Months", "SelectDuration",  "" + (24 * 60)),
+        PromptOption("Six Months", "SelectDuration",  "" + (24 * 120)),
+        PromptOption("One Year", "SelectDuration",  "" + (24 * 365)),
+        PromptOption("Two Years", "SelectDuration",  "" + (24 * 365 * 2)),
+        PromptOption("Up To Today", "SelectDuration",  "" + (100000)),
+
+        PromptOption("Menu", "Menu", ""),
+        PromptOption("Quit", "Quit", ""))),
+   Prompt(
+      "Get Start Date",
+      "Please choose the starting date:",
+          List[PromptOption](
+        PromptOption("24 Hours Ago", "SelectStartTime", "24"),
+        PromptOption("48 Hours Ago", "SelectStartTime",  "48"),
+        PromptOption("One Week Ago", "SelectStartTime",  "" + (24 * 7)),
+        PromptOption("Two Weeks Ago", "SelectStartTime",  "" + (24 * 14)),
+        PromptOption("One Month Ago", "SelectStartTime",  "" + (24 * 30)),
+        PromptOption("Two Months Ago", "SelectStartTime",  "" + (24 * 60)),
+        PromptOption("Six Months Ago", "SelectStartTime",  "" + (24 * 120)),
+        PromptOption("One Year Ago", "SelectStartTime",  "" + (24 * 365)),
+        PromptOption("Two Years Ago", "SelectStartTime",  "" + (24 * 365 * 2)),
+        PromptOption("Five Years Ago", "SelectStartTime",  "" + (24 * 365 * 5)),
+        PromptOption("Ten Years Ago", "SelectStartTime",  "" + (24 * 365 * 10)),
+
+        PromptOption("Menu", "Menu", ""),
+        PromptOption("Quit", "Quit", ""))),
+
+    Prompt("Create", "Create Account", null),
+  
+    Prompt("Load Accounts from DB", "", null),
+    Prompt("Save to DB", "SaveAccounts", null),
+
+    Prompt("Get Average Balance", "", null)
 
     
   )
 
-  def GetPrompt(promptTitle: String): Prompt = {
+  def GetPrompt(prompt: PromptOption): Prompt = {
 
     for (a <- 0 to allPrompts.length - 1) {
-      if (allPrompts(a).promptTitle == promptTitle) {
+      if (allPrompts(a).promptTitle == prompt.methodName) {
+
+        return allPrompts(a);
+      }
+    }
+     for (a <- 0 to allPrompts.length - 1) {
+      if (allPrompts(a).promptTitle == prompt.displayedText) {
 
         return allPrompts(a);
       }
     }
     return null;
   }
+ def GetPrompt(prompt: String): Prompt = {
+
+    for (a <- 0 to allPrompts.length - 1) {
+      if (allPrompts(a).promptTitle == prompt) {
+
+        return allPrompts(a);
+      }
+    }
+
+    return null;
+  }
+  
 
   def TryLogin(username: String, password: String): Boolean = {
     for (a <- 0 to allAccounts.length - 1) {
@@ -155,17 +197,17 @@ object AccountsManager {
         //user = allAccounts(a);
         user.fname = allAccounts(a).fname;
         user.lname = allAccounts(a).lname;
-        user.balance = allAccounts(a).balance;
+        user.id = allAccounts(a).id;
         user.username = allAccounts(a).username;
         user.password = allAccounts(a).password;
         currentUserIndex = a;
 
-        println("Successful Login!");
+        printWithTab("Successful Login!");
         SaveAccount();
         return true;
       }
     }
-    println("Failed Login!");
+    printWithTab("Failed Login!");
     return false;
   }
   def TryCreate(
@@ -180,15 +222,15 @@ object AccountsManager {
     for (a <- 0 to allAccounts.length - 1) {
       if (allAccounts(a).username == username) {
 
-        println("Account already exists!");
+        printWithTab("Account already exists!");
         return false;
       }
     }
 
-    val newPerson = Person(firstname, lastname, username, password, 0);
+    val newAccount = Account(firstname, lastname, username, password, 0, false);
 
-    allAccounts += newPerson;
-    println("Account created.");
+    allAccounts += newAccount;
+    printWithTab("Account created.");
     SaveAccounts();
     return true;
   }
@@ -197,7 +239,7 @@ object AccountsManager {
   def PrintAccounts() = {
     for (a <- 0 to allAccounts.length - 1) {
 
-      println(allAccounts(a));
+      printWithTab(allAccounts(a).toString());
 
     }
 
@@ -234,9 +276,9 @@ object AccountsManager {
       val preBalance = s(4).split(":")(1).replace("}", "");
       val balance = preBalance.replace("]", "").toInt;
 
-      val newPerson = Person(s(0), s(1), username, password, balance);
+      val newAccount = Account(s(0), s(1), username, password, balance, false);
 
-      allAccounts += newPerson;
+      allAccounts += newAccount;
 //print("Adding to accounts");
     }
 //SaveAccounts();
@@ -246,7 +288,7 @@ object AccountsManager {
     
 
     for (i <- 0 to allAccounts.length - 1) {
-      val person = allAccounts(i);
+      val Account = allAccounts(i);
      
     
 
@@ -255,7 +297,7 @@ object AccountsManager {
   def SaveAccount() = {
 
     
-    val person = allAccounts(currentUserIndex);
+    val Account = allAccounts(currentUserIndex);
     
 
 
@@ -272,21 +314,43 @@ object AccountsManager {
         returnVal = readLine().toInt;
 
       } catch {
-        case _: Throwable => println("Invalid Input")
+        case _: Throwable => printWithTab("Invalid Input")
       }
 
     }
     return returnVal;
   }
 
-  def TakeAction(promptTitle: String): Prompt = {
+  def TakeAction(prompt: Prompt, optionIndex: Int): Prompt = {
+            
+
+     val promptTitle = prompt.promptTitle
 if (promptTitle == "Get Average Balance") {
       var total = 0.0;
       var numberOfAccounts = allAccounts.length
     for (i <- 0 to allAccounts.length - 1) {
-      total = total + allAccounts(i).balance
+     // total = total + allAccounts(i).balance
     }
-    println("\n\nAverage balance for all accounts = " + (total/numberOfAccounts))
+    printWithTab("\n\nAverage balance for all accounts = " + (total/numberOfAccounts))
+    }
+
+   if(promptTitle == "SelectSport"){
+       SelectSport(prompt.options(optionIndex))
+      // return GetPrompt(promptTitle)
+   }
+  
+   if(promptTitle == "SelectStartTime"){
+       
+       SelectStartTime(prompt.options(optionIndex))
+       //return GetPrompt(promptTitle)
+   }
+   if(promptTitle == "StartQuery"){
+       
+       //return GetPrompt("StartQuery")
+   }
+ if (promptTitle == "Save to DB") {
+      SaveAccounts();
+
     }
     if (promptTitle == "Save to DB") {
       SaveAccounts();
@@ -309,44 +373,41 @@ if (promptTitle == "Get Average Balance") {
 
     }
     if (promptTitle == "Login") {
-      println("Please enter your username:")
+      printWithTab("Please enter your username:")
       val username = readLine();
-      println("Please enter your password:")
+      printWithTab("Please enter your password:")
       val password = readLine();
       if (TryLogin(username, password) == true) {
 
         return GetPrompt("Success");
       } else {
-        println("Invalid username or password.");
-        Thread.sleep(800)
-        //user = null;
-        // if(loggedIn) return GetPrompt(("Menu"));
+        printWithTab("Invalid username or password.");
+       
 
         return GetPrompt("Fail");
       }
     }
     if (promptTitle == "Create") {
-      println("Please enter your first name:")
+      printWithTab("Please enter your first name:")
       val firstname = readLine();
-      println("Please enter your last name:")
+      printWithTab("Please enter your last name:")
       val lastname = readLine();
-      println("Please enter your new username:")
+      printWithTab("Please enter your new username:")
       val username = readLine();
-      println("Please enter your password:")
+      printWithTab("Please enter your password:")
       val password = readLine();
       if (TryCreate(firstname, lastname, username, password) == true) {
     SaveAccounts();
 
         return GetPrompt("Success");
       } else {
-        Thread.sleep(800)
 
         return GetPrompt("Fail");
       }
     }
     if (promptTitle == "View Balance") {
-      println("...");
-      Thread.sleep(2000);
+      printWithTab("...");
+      Thread.sleep(300);
 
     }
     if (promptTitle == "Quit") {
@@ -354,47 +415,18 @@ if (promptTitle == "Get Average Balance") {
       return null;
     }
 
-    if (promptTitle == "Deposit Custom Amount") {
-      println("Please enter the amount:")
-      val amount = GetNextInt(9999999);
-      val money = amount.toInt;
-      user.balance = user.balance + money;
-           allAccounts(currentUserIndex).balance = user.balance;
-
-          SaveAccounts();
-return GetPrompt("Menu")
-    }
-    if (promptTitle == "Withdraw Custom Amount") {
-      println("Please enter the amount:")
-      val amount = GetNextInt(9999999);
-      val money = amount.toInt;
-      if (user.balance >= money) {
-        user.balance = user.balance - money;
-              allAccounts(currentUserIndex).balance = user.balance;
-
-            SaveAccounts();
-
-      } else {
-        println("Can't withdraw - Not enough funds.");
-        return GetPrompt("Withdraw");
-      }
-    }
-    if (promptTitle.contains("Deposit $")) {
-      return GetPrompt(("View Balance"));
-    }
-    if (promptTitle.contains("Withdraw $")) {
-      return GetPrompt(("View Balance"));
-    }
     return GetPrompt(promptTitle);
   }
 
-  println("\n")
 
  
   var currentPrompt = GetPrompt("Begin");
-  LoadAccounts()
+
   while (running) {
-    println(currentPrompt.promptText);
+     printWithTab("\n")
+    printWithTab(currentPrompt.promptText);
+  //  printWithTab("\n")
+   //  printWithTab("\n")
     if (currentPrompt.promptTitle == "Success") {
       currentPrompt = GetPrompt("Menu")
     }
@@ -409,10 +441,11 @@ return GetPrompt("Menu")
 
       if (currentPrompt.options.length > 1) {
         for (a <- 1 to currentPrompt.options.length) {
-          println(a + " " + currentPrompt.options(a - 1).toString());
+            printWithTab(a + " " + currentPrompt.options(a - 1).displayedText.toString());
         }
       }
     }
+    printWithTab("\n")
 
     var input = 1;
 
@@ -423,21 +456,64 @@ return GetPrompt("Menu")
     if (optionsCount == 1) inputIndex = 0;
     if (optionsCount > 0) {
       val currentOption = currentPrompt.options(inputIndex);
+      print("current option = " + currentOption.displayedText)
       val selectedPrompt = GetPrompt(currentOption);
-      // if(selectedPrompt != null){
+     //  if(selectedPrompt != null){
       currentPrompt = selectedPrompt;
-      //}
-      if (currentPrompt.promptTitle == "View Balance") {
-        println("Balance = " + user.balance);
-      }
+     // }
+      //if(currentPrompt == null) println("ERRRRRROR " + currentPrompt.promptText + "," + currentPrompt.promptTitle)
 
-        currentPrompt = TakeAction(currentPrompt.promptTitle);
+        currentPrompt = TakeAction(currentPrompt, inputIndex);
       }
     
+  //  printWithTab("Exiting the program.")
 
-    println("\n")
 
   }
-  
+
+  var querySport = "none"
+  var queryStartTime = -1
+  var queryDuration = 0
+
+  def SelectSport(option : PromptOption){
+
+    querySport = option.argument
+    println("Sport = " + querySport)
+  }
+   def SelectStartTime(option : PromptOption){
+queryStartTime = option.argument.toInt
+
+  }
+   def SelectDuration(option : PromptOption){
+queryDuration = option.argument.toInt
+
+  }
+
+  def StartQuery(){
+      val calendar = Calendar.getInstance()
+      var dayOfYear = calendar.get(Calendar.DAY_OF_YEAR) 
+      var date = calendar.get(Calendar.DATE) 
+
+      println("Querying : \nLeague = " + querySport + "\nStartDate = " + date + "\n")
+  }
+
+    def printWithTab(output : String){
+        if(output == "") return
+        if(output.endsWith("\n")){
+            var baseContent = ""
+             for (a <- 0 to 81) {
+            baseContent = baseContent + "-"
+        }
+            println(baseContent)
+            return
+        }
+        val length = output.length()
+        var addition = ""
+        for (a <- 0 to (50 - length)) {
+            addition = addition + "-"
+        }
+      print("--------------  " + output + "   ------------" + addition + "\n")
+  }
+   
 }
 
