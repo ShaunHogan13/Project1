@@ -35,8 +35,8 @@ case class Prompt(
 
 case class PromptOption(
     displayedText: String,
-    methodName: String,
-    argument: String
+    nextMethodName: String,
+    nextMethodArgument: String
 
 )
 
@@ -97,54 +97,64 @@ object AccountsManager {
       "Menu",
       "Please choose from the following options:",
       List[PromptOption](
-        PromptOption("Query", "StartQuery", ""),
+        PromptOption("Query", "SelectSport", ""),
         PromptOption("Log Out", "Log Out", ""),
         PromptOption("Quit", "Quit", ""),
         PromptOption("Manage Account", "ManageAccount", ""))
     ),
+
+
+    
     Prompt(
-      "StartQuery",
+      "SelectSport",
       "Please choose what sport you want to query:",
       List[PromptOption](
-        PromptOption("MLB", "SelectSport", "MLB"),
-        PromptOption("NFL", "SelectSport", "NFL"),
-        PromptOption("NBA", "SelectSport", "NBA"),
-        PromptOption("All Leagues", "SelectSport", "All"),
+        PromptOption("MLB", "SelectDuration", "MLB"),
+        PromptOption("NFL", "SelectDuration", "NFL"),
+        PromptOption("NBA", "SelectDuration", "NBA"),
+        PromptOption("All Leagues", "SelectDuration", "All"),
 
         PromptOption("Menu", "Menu", ""),
         PromptOption("Quit", "Quit", ""))),
+        
+        Prompt(
+      "StartQuery",
+      "Querying!",
+      List[PromptOption](  
+        PromptOption("Menu", "Menu", ""))),
     Prompt(
-      "Get Duration",
+      "SelectDuration",
       "Please choose the duration:",
           List[PromptOption](
-        PromptOption("24 Hours", "SelectDuration", "24"),
-        PromptOption("48 Hours", "SelectDuration",  "48"),
-        PromptOption("One Week", "SelectDuration",  "" + (24 * 7)),
-        PromptOption("Two Weeks", "SelectDuration",  "" + (24 * 14)),
-        PromptOption("One Month", "SelectDuration",  "" + (24 * 30)),
-        PromptOption("Two Months", "SelectDuration",  "" + (24 * 60)),
-        PromptOption("Six Months", "SelectDuration",  "" + (24 * 120)),
-        PromptOption("One Year", "SelectDuration",  "" + (24 * 365)),
-        PromptOption("Two Years", "SelectDuration",  "" + (24 * 365 * 2)),
-        PromptOption("Up To Today", "SelectDuration",  "" + (100000)),
+        PromptOption("24 Hours", "SelectStartTime", "24"),
+        PromptOption("48 Hours", "SelectStartTime",  "48"),
+        PromptOption("One Week", "SelectStartTime",  "" + (24 * 7)),
+        PromptOption("Two Weeks", "SelectStartTime",  "" + (24 * 14)),
+        PromptOption("One Month", "SelectStartTime",  "" + (24 * 30)),
+        PromptOption("Two Months", "SelectStartTime",  "" + (24 * 60)),
+        PromptOption("Six Months", "SelectStartTime",  "" + (24 * 120)),
+        PromptOption("One Year", "SelectStartTime",  "" + (24 * 365)),
+        PromptOption("Two Years", "SelectStartTime",  "" + (24 * 365 * 2)),
+        PromptOption("Up To Today", "SelectStartTime",  "" + (100000)),
 
         PromptOption("Menu", "Menu", ""),
         PromptOption("Quit", "Quit", ""))),
+
    Prompt(
-      "Get Start Date",
-      "Please choose the starting date:",
+      "SelectStartTime",
+      "Please choose the starting time:",
           List[PromptOption](
-        PromptOption("24 Hours Ago", "SelectStartTime", "24"),
-        PromptOption("48 Hours Ago", "SelectStartTime",  "48"),
-        PromptOption("One Week Ago", "SelectStartTime",  "" + (24 * 7)),
-        PromptOption("Two Weeks Ago", "SelectStartTime",  "" + (24 * 14)),
-        PromptOption("One Month Ago", "SelectStartTime",  "" + (24 * 30)),
-        PromptOption("Two Months Ago", "SelectStartTime",  "" + (24 * 60)),
-        PromptOption("Six Months Ago", "SelectStartTime",  "" + (24 * 120)),
-        PromptOption("One Year Ago", "SelectStartTime",  "" + (24 * 365)),
-        PromptOption("Two Years Ago", "SelectStartTime",  "" + (24 * 365 * 2)),
-        PromptOption("Five Years Ago", "SelectStartTime",  "" + (24 * 365 * 5)),
-        PromptOption("Ten Years Ago", "SelectStartTime",  "" + (24 * 365 * 10)),
+        PromptOption("24 Hours Ago", "StartQuery", "24"),
+        PromptOption("48 Hours Ago", "StartQuery",  "48"),
+        PromptOption("One Week Ago", "StartQuery",  "" + (24 * 7)),
+        PromptOption("Two Weeks Ago", "StartQuery",  "" + (24 * 14)),
+        PromptOption("One Month Ago", "StartQuery",  "" + (24 * 30)),
+        PromptOption("Two Months Ago", "StartQuery",  "" + (24 * 60)),
+        PromptOption("Six Months Ago", "StartQuery",  "" + (24 * 120)),
+        PromptOption("One Year Ago", "StartQuery",  "" + (24 * 365)),
+        PromptOption("Two Years Ago", "StartQuery",  "" + (24 * 365 * 2)),
+        PromptOption("Five Years Ago", "StartQuery",  "" + (24 * 365 * 5)),
+        PromptOption("Ten Years Ago", "StartQuery",  "" + (24 * 365 * 10)),
 
         PromptOption("Menu", "Menu", ""),
         PromptOption("Quit", "Quit", ""))),
@@ -162,17 +172,12 @@ object AccountsManager {
   def GetPrompt(prompt: PromptOption): Prompt = {
 
     for (a <- 0 to allPrompts.length - 1) {
-      if (allPrompts(a).promptTitle == prompt.methodName) {
+      if (allPrompts(a).promptTitle == prompt.nextMethodName) {
 
         return allPrompts(a);
       }
     }
-     for (a <- 0 to allPrompts.length - 1) {
-      if (allPrompts(a).promptTitle == prompt.displayedText) {
-
-        return allPrompts(a);
-      }
-    }
+  
     return null;
   }
  def GetPrompt(prompt: String): Prompt = {
@@ -323,8 +328,15 @@ object AccountsManager {
 
   def TakeAction(prompt: Prompt, optionIndex: Int): Prompt = {
             
+     var promptTitle = prompt.promptTitle
+     
 
-     val promptTitle = prompt.promptTitle
+    if(promptTitle == "StartQuery"){
+        StartQuery(1)
+        
+    }
+
+
 if (promptTitle == "Get Average Balance") {
       var total = 0.0;
       var numberOfAccounts = allAccounts.length
@@ -335,17 +347,24 @@ if (promptTitle == "Get Average Balance") {
     }
 
    if(promptTitle == "SelectSport"){
-       SelectSport(prompt.options(optionIndex))
-      // return GetPrompt(promptTitle)
-   }
-  
-   if(promptTitle == "SelectStartTime"){
+                   SelectSport(prompt.options(optionIndex))
+
+       // return GetPrompt("SelectSport")
        
+   }
+  if(promptTitle == "SelectDuration"){
+     //       SelectSport(prompt.options(optionIndex))
+    SelectDuration(prompt.options(optionIndex))
+      
+  }
+   if(promptTitle == "SelectStartTime"){
        SelectStartTime(prompt.options(optionIndex))
+      // SelectStartTime(prompt.options(optionIndex))
        //return GetPrompt(promptTitle)
    }
    if(promptTitle == "StartQuery"){
-       
+     //  StartQuery(prompt.options(optionIndex).nextMethodArgument.toInt)
+
        //return GetPrompt("StartQuery")
    }
  if (promptTitle == "Save to DB") {
@@ -433,6 +452,7 @@ if (promptTitle == "Get Average Balance") {
     if (currentPrompt.promptTitle == "Fail") {
       currentPrompt = GetPrompt("Begin")
     }
+   
     var optionsCount = 0;
 
     if (currentPrompt.options != null) {
@@ -456,17 +476,20 @@ if (promptTitle == "Get Average Balance") {
     if (optionsCount == 1) inputIndex = 0;
     if (optionsCount > 0) {
       val currentOption = currentPrompt.options(inputIndex);
-      print("current option = " + currentOption.displayedText)
-      val selectedPrompt = GetPrompt(currentOption);
-     //  if(selectedPrompt != null){
-      currentPrompt = selectedPrompt;
-     // }
-      //if(currentPrompt == null) println("ERRRRRROR " + currentPrompt.promptText + "," + currentPrompt.promptTitle)
+      //TakeAction(currentPrompt, inputIndex);
 
-        currentPrompt = TakeAction(currentPrompt, inputIndex);
-      }
+      val selectedPrompt = GetPrompt(currentOption);
+
+      
     
-  //  printWithTab("Exiting the program.")
+        
+        currentPrompt = TakeAction(currentPrompt, inputIndex);
+        currentPrompt = selectedPrompt;
+      }
+      else{
+                  currentPrompt = TakeAction(currentPrompt, -1);
+
+      }
 
 
   }
@@ -477,26 +500,75 @@ if (promptTitle == "Get Average Balance") {
 
   def SelectSport(option : PromptOption){
 
-    querySport = option.argument
+    querySport = option.nextMethodArgument
     println("Sport = " + querySport)
   }
    def SelectStartTime(option : PromptOption){
-queryStartTime = option.argument.toInt
+queryStartTime = option.nextMethodArgument.toInt
 
   }
    def SelectDuration(option : PromptOption){
-queryDuration = option.argument.toInt
+queryDuration = option.nextMethodArgument.toInt
 
   }
 
-  def StartQuery(){
-      val calendar = Calendar.getInstance()
-      var dayOfYear = calendar.get(Calendar.DAY_OF_YEAR) 
-      var date = calendar.get(Calendar.DATE) 
+  def StartQuery(timeInHours : Int){
+        val calendar = Calendar.getInstance()
+        val curDay = calendar.get(Calendar.DATE) 
+        val curMonth = GetMonth(calendar.get(Calendar.MONTH))
+        val curYear = calendar.get(Calendar.YEAR)
+        val curHour = calendar.get(Calendar.HOUR_OF_DAY)
+        var am_pm = "AM"
+        if(curHour > 11) am_pm = "PM"
 
-      println("Querying : \nLeague = " + querySport + "\nStartDate = " + date + "\n")
+        if(queryStartTime <= 48){
+            calendar.add(Calendar.HOUR_OF_DAY, -queryStartTime)
+
+            println("Query starts " + queryStartTime + " hours ago at " + curHour + " " + am_pm + ".")
+        }
+        else{
+            calendar.add(Calendar.DAY_OF_MONTH, -queryStartTime/24)
+
+        }
+        var beginDay = calendar.get(Calendar.DATE) 
+        val beginMonth = GetMonth(calendar.get(Calendar.MONTH))
+        val beginYear = calendar.get(Calendar.YEAR)
+        println("Query\n\nLeague = " + querySport + "\n\nToday's date = " + curMonth + " " + curDay  + ", " + curYear + ".")
+        println("Query begin date = " + beginMonth + " " + beginDay  + ", " + beginYear + ".")
+
+        
+
+        var endDay = calendar.get(Calendar.DATE) 
+        var endMonth = GetMonth(calendar.get(Calendar.MONTH))
+        var endYear = calendar.get(Calendar.YEAR)
+        var endHour = calendar.get(Calendar.HOUR_OF_DAY)
+
+        if(queryDuration >= queryDuration){
+            endDay = curDay
+            endMonth = curMonth
+            endYear = curYear
+            endHour = curHour
+        }
+      println("Query end date = " + endMonth + " " + endDay  + ", " + endYear + ".\n" )
+
   }
+def GetMonth(index : Int) : String = {
+    if(index == 0) return "January"
+    if(index == 1) return "February"
+    if(index == 2) return "March"
+    if(index == 3) return "April"
+    if(index == 4) return "May"
+    if(index == 5) return "June"
+    if(index == 6) return "July"
+    if(index == 7) return "August"
+    if(index == 8) return "September"
+    if(index == 9) return "October"
+    if(index == 10) return "November"
+    if(index == 11) return "December"
+    return null
 
+}
+  
     def printWithTab(output : String){
         if(output == "") return
         if(output.endsWith("\n")){
