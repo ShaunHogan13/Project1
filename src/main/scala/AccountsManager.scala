@@ -80,7 +80,27 @@ object AccountsManager {
         PromptOption("Quit", "Quit", "")
       )
     ),
-    
+       Prompt(
+      "ChangeUsername",
+      "Enter in your new username: ",
+      null
+    ),
+    Prompt(
+      "ChangePassword",
+      "Enter in your new password: ",
+      null
+    ),
+    Prompt(
+      "ManageAccount",
+      "Manage Account",
+      List[PromptOption](
+        PromptOption("Change Username", "ChangeUsername", ""),
+        PromptOption("Change Password", "ChangePassword", ""),
+        PromptOption("Delete Account", "Create", ""),
+        PromptOption("Menu", "Menu", ""),
+        PromptOption("Quit", "Quit", "")
+      )
+    ),
     Prompt("Login", "Login", null),
     Prompt("Success", "",  List[PromptOption](
         PromptOption("Menu", "Menu", ""))),
@@ -109,9 +129,9 @@ object AccountsManager {
       "SelectSport",
       "Please choose what sport you want to query:",
       List[PromptOption](
-        PromptOption("MLB", "SelectDuration", "MLB"),
-        PromptOption("NFL", "SelectDuration", "NFL"),
-        PromptOption("NBA", "SelectDuration", "NBA"),
+        PromptOption("MLB", "SelectStartTime", "MLB"),
+        PromptOption("NFL", "SelectStartTime", "NFL"),
+        PromptOption("NBA", "SelectStartTime", "NBA"),
         PromptOption("All Leagues", "SelectDuration", "All"),
 
         PromptOption("Menu", "Menu", ""),
@@ -126,16 +146,16 @@ object AccountsManager {
       "SelectDuration",
       "Please choose the duration:",
           List[PromptOption](
-        PromptOption("24 Hours", "SelectStartTime", "24"),
-        PromptOption("48 Hours", "SelectStartTime",  "48"),
-        PromptOption("One Week", "SelectStartTime",  "" + (24 * 7)),
-        PromptOption("Two Weeks", "SelectStartTime",  "" + (24 * 14)),
-        PromptOption("One Month", "SelectStartTime",  "" + (24 * 30)),
-        PromptOption("Two Months", "SelectStartTime",  "" + (24 * 60)),
-        PromptOption("Six Months", "SelectStartTime",  "" + (24 * 120)),
-        PromptOption("One Year", "SelectStartTime",  "" + (24 * 365)),
-        PromptOption("Two Years", "SelectStartTime",  "" + (24 * 365 * 2)),
-        PromptOption("Up To Today", "SelectStartTime",  "" + (100000)),
+        PromptOption("24 Hours", "StartQuery", "24"),
+        PromptOption("48 Hours", "StartQuery",  "48"),
+        PromptOption("One Week", "StartQuery",  "" + (24 * 7)),
+        PromptOption("Two Weeks", "StartQuery",  "" + (24 * 14)),
+        PromptOption("One Month", "StartQuery",  "" + (24 * 30)),
+        PromptOption("Two Months", "StartQuery",  "" + (24 * 60)),
+        PromptOption("Six Months", "StartQuery",  "" + (24 * 120)),
+        PromptOption("One Year", "StartQuery",  "" + (24 * 365)),
+        PromptOption("Two Years", "StartQuery",  "" + (24 * 365 * 2)),
+        PromptOption("Up To Today", "StartQuery",  "" + (100000)),
 
         PromptOption("Menu", "Menu", ""),
         PromptOption("Quit", "Quit", ""))),
@@ -144,17 +164,17 @@ object AccountsManager {
       "SelectStartTime",
       "Please choose the starting time:",
           List[PromptOption](
-        PromptOption("24 Hours Ago", "StartQuery", "24"),
-        PromptOption("48 Hours Ago", "StartQuery",  "48"),
-        PromptOption("One Week Ago", "StartQuery",  "" + (24 * 7)),
-        PromptOption("Two Weeks Ago", "StartQuery",  "" + (24 * 14)),
-        PromptOption("One Month Ago", "StartQuery",  "" + (24 * 30)),
-        PromptOption("Two Months Ago", "StartQuery",  "" + (24 * 60)),
-        PromptOption("Six Months Ago", "StartQuery",  "" + (24 * 120)),
-        PromptOption("One Year Ago", "StartQuery",  "" + (24 * 365)),
-        PromptOption("Two Years Ago", "StartQuery",  "" + (24 * 365 * 2)),
-        PromptOption("Five Years Ago", "StartQuery",  "" + (24 * 365 * 5)),
-        PromptOption("Ten Years Ago", "StartQuery",  "" + (24 * 365 * 10)),
+        PromptOption("24 Hours Ago", "SelectDuration", "24"),
+        PromptOption("48 Hours Ago", "SelectDuration",  "48"),
+        PromptOption("One Week Ago", "SelectDuration",  "" + (24 * 7)),
+        PromptOption("Two Weeks Ago", "SelectDuration",  "" + (24 * 14)),
+        PromptOption("One Month Ago", "SelectDuration",  "" + (24 * 30)),
+        PromptOption("Two Months Ago", "SelectDuration",  "" + (24 * 60)),
+        PromptOption("Six Months Ago", "SelectDuration",  "" + (24 * 120)),
+        PromptOption("One Year Ago", "SelectDuration",  "" + (24 * 365)),
+        PromptOption("Two Years Ago", "SelectDuration",  "" + (24 * 365 * 2)),
+        PromptOption("Five Years Ago", "SelectDuration",  "" + (24 * 365 * 5)),
+        PromptOption("Ten Years Ago", "SelectDuration",  "" + (24 * 365 * 10)),
 
         PromptOption("Menu", "Menu", ""),
         PromptOption("Quit", "Quit", ""))),
@@ -205,6 +225,8 @@ object AccountsManager {
         user.id = allAccounts(a).id;
         user.username = allAccounts(a).username;
         user.password = allAccounts(a).password;
+        user.admin = allAccounts(a).admin;
+
         currentUserIndex = a;
 
         printWithTab("Successful Login!");
@@ -215,6 +237,7 @@ object AccountsManager {
     printWithTab("Failed Login!");
     return false;
   }
+  
   def TryCreate(
       firstname: String,
       lastname: String,
@@ -238,6 +261,56 @@ object AccountsManager {
     printWithTab("Account created.");
     SaveAccounts();
     return true;
+  }
+def TryChangeUsername(
+      
+      newUsername: String
+    
+  ): Boolean = {
+    if (newUsername.length() < 2) return false;
+
+    for (a <- 0 to allAccounts.length - 1) {
+      if (allAccounts(a).username == newUsername) {
+
+        printWithTab("Username already exists.");
+        return false;
+      }
+    }
+
+    for (a <- 0 to allAccounts.length - 1) {
+      if (allAccounts(a).username == user.username) {
+            allAccounts(a).username = newUsername
+            user.username = newUsername
+        printWithTab("Username succesfully changed.");
+            
+            SaveAccounts();
+
+            return true;
+      }
+    }
+        printWithTab("Error changing username");
+
+    return false;
+  }
+def TryChangePassword(
+      
+      newPassword: String
+    
+  ): Boolean = {
+    if (newPassword.length() < 2) return false;
+
+    for (a <- 0 to allAccounts.length - 1) {
+      if (allAccounts(a).username == user.username) {
+
+        allAccounts(a).password = newPassword
+        return true;
+      }
+    }
+
+  
+        printWithTab("Error changing username");
+
+    return false;
   }
 
 
@@ -367,6 +440,7 @@ if (promptTitle == "Get Average Balance") {
 
        //return GetPrompt("StartQuery")
    }
+   
  if (promptTitle == "Save to DB") {
       SaveAccounts();
 
@@ -424,6 +498,31 @@ if (promptTitle == "Get Average Balance") {
         return GetPrompt("Fail");
       }
     }
+      if (promptTitle == "ChangeUsername") {
+      val newUsername = readLine();
+     
+      if (TryChangeUsername(newUsername) == true) {
+             SaveAccounts();
+
+        return GetPrompt("Success");
+      } else {
+
+        return GetPrompt("Fail");
+      }
+    }
+  if (promptTitle == "ChangePassword") {
+      val newPassword = readLine();
+     
+      if (TryChangePassword(newPassword) == true) {
+             SaveAccounts();
+
+        return GetPrompt("Success");
+      } else {
+
+        return GetPrompt("Fail");
+      }
+    }
+
     if (promptTitle == "View Balance") {
       printWithTab("...");
       Thread.sleep(300);
@@ -452,7 +551,9 @@ if (promptTitle == "Get Average Balance") {
     if (currentPrompt.promptTitle == "Fail") {
       currentPrompt = GetPrompt("Begin")
     }
-   
+   if(currentPrompt.promptTitle == "ManageAccount"){
+       PrintAccountDetails()
+   }
     var optionsCount = 0;
 
     if (currentPrompt.options != null) {
@@ -508,42 +609,53 @@ queryStartTime = option.nextMethodArgument.toInt
 
   }
    def SelectDuration(option : PromptOption){
-queryDuration = option.nextMethodArgument.toInt
+    queryDuration = option.nextMethodArgument.toInt
 
   }
+ def PrintAccountDetails(){
+     printWithTab("\n")
+     printWithTab("This is the account of " + user.fname + " " + user.lname + ".")
+     printWithTab("Username = " + user.username)
+     if(user.admin){
+        printWithTab("Administrator")
+     }
+     else{
+        printWithTab("Basic User")
+     }
+     printWithTab("\n")
+ }
+
 
   def StartQuery(timeInHours : Int){
         val calendar = Calendar.getInstance()
         val curDay = calendar.get(Calendar.DATE) 
         val curMonth = GetMonth(calendar.get(Calendar.MONTH))
         val curYear = calendar.get(Calendar.YEAR)
-        val curHour = calendar.get(Calendar.HOUR_OF_DAY)
+        var curHour = calendar.get(Calendar.HOUR_OF_DAY)
         var am_pm = "AM"
-        if(curHour > 11) am_pm = "PM"
-
-        if(queryStartTime <= 48){
+        if(curHour > 11){
+         curHour = curHour - 12
+         am_pm = "PM"
+        }
             calendar.add(Calendar.HOUR_OF_DAY, -queryStartTime)
 
             println("Query starts " + queryStartTime + " hours ago at " + curHour + " " + am_pm + ".")
-        }
-        else{
-            calendar.add(Calendar.DAY_OF_MONTH, -queryStartTime/24)
-
-        }
+        
+       
         var beginDay = calendar.get(Calendar.DATE) 
         val beginMonth = GetMonth(calendar.get(Calendar.MONTH))
         val beginYear = calendar.get(Calendar.YEAR)
         println("Query\n\nLeague = " + querySport + "\n\nToday's date = " + curMonth + " " + curDay  + ", " + curYear + ".")
         println("Query begin date = " + beginMonth + " " + beginDay  + ", " + beginYear + ".")
 
-        
+            calendar.add(Calendar.HOUR_OF_DAY, queryDuration)
 
         var endDay = calendar.get(Calendar.DATE) 
         var endMonth = GetMonth(calendar.get(Calendar.MONTH))
         var endYear = calendar.get(Calendar.YEAR)
         var endHour = calendar.get(Calendar.HOUR_OF_DAY)
 
-        if(queryDuration >= queryDuration){
+        if(queryDuration >= queryStartTime){
             endDay = curDay
             endMonth = curMonth
             endYear = curYear
