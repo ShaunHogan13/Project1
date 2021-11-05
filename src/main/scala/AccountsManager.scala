@@ -1,4 +1,6 @@
 package example
+
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
@@ -15,7 +17,7 @@ import java.nio.charset.StandardCharsets
 import java.io.FileWriter
 
 import java.io.PrintWriter
-import java.util.Calendar;
+import java.util.Calendar
 
 
 case class Account(
@@ -43,6 +45,11 @@ case class PromptOption(
 
 ////This is a repository test 11:42AM 10/28/2021
 object AccountsManager {
+   
+    StartQuery(1)
+
+
+    val encryption = 190499283
 
     def SetUp(){
         
@@ -238,6 +245,15 @@ object AccountsManager {
     return false;
   }
   
+  def Encrypt(password : String){
+
+
+  }
+  def Decrypt(password : String){
+val firstChar = password.charAt(0)
+    
+  }
+
   def TryCreate(
       firstname: String,
       lastname: String,
@@ -627,6 +643,33 @@ queryStartTime = option.nextMethodArgument.toInt
 
 
   def StartQuery(timeInHours : Int){
+
+
+///Get info from twitter API////////
+
+//// GIVEN
+
+//Type = NBA, MLB, NFL, or ALL
+
+//Start Time
+
+//End Time
+//println("HERE 1")
+//val api = new _root_.twitter4j.ScalaAPI()
+//println("HERE 2")
+
+//val count = api.QueryAPI("MLB")
+//println("\n\n\nThe result for the MLB = " + count + ".\n\n\n")
+
+//var data = ScalaAPI.QueryAPI(querySport.toString())
+//print (data)
+//////////
+
+////////////////////////////////////
+
+
+
+
         val calendar = Calendar.getInstance()
         val curDay = calendar.get(Calendar.DATE) 
         val curMonth = GetMonth(calendar.get(Calendar.MONTH))
@@ -664,6 +707,9 @@ queryStartTime = option.nextMethodArgument.toInt
       println("Query end date = " + endMonth + " " + endDay  + ", " + endYear + ".\n" )
 
   }
+
+
+
 def GetMonth(index : Int) : String = {
     if(index == 0) return "January"
     if(index == 1) return "February"
