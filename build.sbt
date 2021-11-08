@@ -28,8 +28,8 @@ version := "1.0"
 libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
 libraryDependencies += "org.apache.hadoop" % "hadoop-client" % "2.7.0"
 libraryDependencies += "net.liftweb" %% "lift-json" % "2.6"
-libraryDependencies += "org.twitter4j" % "twitter4j-stream" % "3.0.3"
-
+//libraryDependencies += "com.github.fedeoasi" %% "news-api-client" % "0.4"
+//libraryDependencies += "com.github.fedeoasi" %% "news-api-client" % "0.2"
 //libraryDependencies += "org.twitter4j" % "twitter4j-stream" % "3.0.3"
 
 // Here, `libraryDependencies` is a set of dependencies, and by using `+=`,
