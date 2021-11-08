@@ -1,3 +1,4 @@
+//package example
 
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -17,6 +18,7 @@ import java.io.FileWriter
 
 import java.io.PrintWriter
 import java.util.Calendar
+import example.Hdfsdemo
 
 
 case class Account(
@@ -44,15 +46,15 @@ case class PromptOption(
 
 ////This is a repository test 11:42AM 10/28/2021
 object AccountsManager {
-   
+   var demo = Hdfsdemo
     StartQuery(1)
 
 
     val encryption = 190499283
 
-    def SetUp(){
+    def SetUp() = {
         
-
+      
 
         println("V S A - Vanquish Sports Analysis")
         TakeAction(GetPrompt("Begin"), -1)
@@ -104,9 +106,13 @@ object AccountsManager {
         PromptOption("Change Password", "ChangePassword", ""),
         PromptOption("Delete Account", "Create", ""),
         PromptOption("Menu", "Menu", ""),
-        PromptOption("Quit", "Quit", "")
+        PromptOption("Quit", "Quit", ""),
+        PromptOption("Generate File", "GenFile", "")
       )
     ),
+    Prompt("GenFile", "Genereate File", List[PromptOption](
+        PromptOption("Menu","Menu", ""))),
+
     Prompt("Login", "Login", null),
     Prompt("Success", "",  List[PromptOption](
         PromptOption("Menu", "Menu", ""))),
@@ -350,6 +356,13 @@ def TryChangePassword(
     
   }
 
+  def GenFile(){
+    if(user.admin == true){
+      println("No action necessary.")
+      
+     // demo.createFile("Random Data Here", filename)
+    }
+  }
 
   def LoadAccountsLocally() = {
     allAccounts.clear();
@@ -455,7 +468,17 @@ if (promptTitle == "Get Average Balance") {
 
        //return GetPrompt("StartQuery")
    }
-   
+   if(promptTitle == "GenFile" || promptTitle == "Generate File"){
+    
+     if(user.admin == true){
+        println("Because you are an administrator, access has been granted.")
+        GenFile()
+     }
+     else{
+        println("Access denied because you are not an administrator.")
+
+     }
+   }
  if (promptTitle == "Save to DB") {
       SaveAccounts();
 
@@ -640,28 +663,21 @@ queryStartTime = option.nextMethodArgument.toInt
      printWithTab("\n")
  }
 
+val api = new ScalaAPI()
 
   def StartQuery(timeInHours : Int){
 
 
-///Get info from twitter API////////
-
 //// GIVEN
-
 //Type = NBA, MLB, NFL, or ALL
-
 //Start Time
-
 //End Time
-//println("HERE 1")
-//val api = new _root_.twitter4j.ScalaAPI()
-//println("HERE 2")
+//println(" 2")
 
-//val count = api.QueryAPI("MLB")
-//println("\n\n\nThe result for the MLB = " + count + ".\n\n\n")
+val count = api.queryAPI("MLB")
+println("\n\n\nThe result for the MLB = " + count + ".\n\n\n")
 
-//var data = ScalaAPI.QueryAPI(querySport.toString())
-//print (data)
+
 //////////
 
 ////////////////////////////////////
