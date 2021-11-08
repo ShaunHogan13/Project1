@@ -1,5 +1,6 @@
 //package example
 
+import java.util.Date
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -46,8 +47,7 @@ case class PromptOption(
 
 ////This is a repository test 11:42AM 10/28/2021
 object AccountsManager {
-   var demo = Hdfsdemo
-    StartQuery(1)
+    //StartQuery(1)
 
 
     val encryption = 190499283
@@ -167,7 +167,7 @@ object AccountsManager {
         PromptOption("Six Months", "StartQuery",  "" + (24 * 120)),
         PromptOption("One Year", "StartQuery",  "" + (24 * 365)),
         PromptOption("Two Years", "StartQuery",  "" + (24 * 365 * 2)),
-        PromptOption("Up To Today", "StartQuery",  "" + (100000)),
+        PromptOption("Up To Today", "StartQuery",  "" + (10000000)),
 
         PromptOption("Menu", "Menu", ""),
         PromptOption("Quit", "Quit", ""))),
@@ -187,6 +187,7 @@ object AccountsManager {
         PromptOption("Two Years Ago", "SelectDuration",  "" + (24 * 365 * 2)),
         PromptOption("Five Years Ago", "SelectDuration",  "" + (24 * 365 * 5)),
         PromptOption("Ten Years Ago", "SelectDuration",  "" + (24 * 365 * 10)),
+        PromptOption("Fifty Years Ago", "SelectDuration",  "" + (24 * 365 * 50)),
 
         PromptOption("Menu", "Menu", ""),
         PromptOption("Quit", "Quit", ""))),
@@ -663,19 +664,15 @@ queryStartTime = option.nextMethodArgument.toInt
      printWithTab("\n")
  }
 
-val api = new ScalaAPI()
+
 
   def StartQuery(timeInHours : Int){
-
-
+var api = new ScalaAPI()
 //// GIVEN
 //Type = NBA, MLB, NFL, or ALL
 //Start Time
 //End Time
-//println(" 2")
 
-val count = api.queryAPI("MLB")
-println("\n\n\nThe result for the MLB = " + count + ".\n\n\n")
 
 
 //////////
@@ -703,6 +700,8 @@ println("\n\n\nThe result for the MLB = " + count + ".\n\n\n")
         var beginDay = calendar.get(Calendar.DATE) 
         val beginMonth = GetMonth(calendar.get(Calendar.MONTH))
         val beginYear = calendar.get(Calendar.YEAR)
+        val beginDate = new Date(beginYear, beginDay, calendar.get(Calendar.MONTH))
+
         println("Query\n\nLeague = " + querySport + "\n\nToday's date = " + curMonth + " " + curDay  + ", " + curYear + ".")
         println("Query begin date = " + beginMonth + " " + beginDay  + ", " + beginYear + ".")
 
@@ -712,6 +711,7 @@ println("\n\n\nThe result for the MLB = " + count + ".\n\n\n")
         var endMonth = GetMonth(calendar.get(Calendar.MONTH))
         var endYear = calendar.get(Calendar.YEAR)
         var endHour = calendar.get(Calendar.HOUR_OF_DAY)
+        val endDate = new Date(endYear, endDay, calendar.get(Calendar.MONTH))
 
         if(queryDuration >= queryStartTime){
             endDay = curDay
@@ -720,6 +720,9 @@ println("\n\n\nThe result for the MLB = " + count + ".\n\n\n")
             endHour = curHour
         }
       println("Query end date = " + endMonth + " " + endDay  + ", " + endYear + ".\n" )
+
+      val count = api.queryAPI(querySport, beginDate, endDate)
+println("The result for the " + querySport + " = " + count + ".\n\n\n")
 
   }
 

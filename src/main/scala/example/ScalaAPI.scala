@@ -10,8 +10,11 @@ import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.DefaultHttpClient
 import net.liftweb.json._
 //import org.github.fedeoasi.newsapi._
+import util.control.Breaks._
 
 import scala.io.Source
+import scala.util.parsing.json.JSONObject
+import java.util.Date
 
 class ScalaAPI {
 
@@ -34,16 +37,16 @@ class ScalaAPI {
 
 
 
-def queryAPI(input : String){
+def queryAPI(input : String, startDate : Date, endDate : Date) : Int = {
    //7:49 PM - got some data!
-var jsonString = ""
-  val filename = "C:/Users/shaun/ScalaDemo/Thursday/thursdaytestproject/src/main/scala/example/QueryLocal.json";
+  //12.39 AM - holy cow im tired
 
-for (line <- Source.fromFile(filename).getLines) {
-    jsonString = jsonString + line
-}
-   
-   println("TOTAL TWEETS: " + cleanJson2(jsonString) )
+  val filename = "C:/Users/shaun/ScalaDemo/Thursday/thursdaytestproject/src/main/scala/example/QueryLocal.json"
+
+var jsonString = Source.fromFile(filename).mkString 
+   val count =  getTotalTweets(jsonString, input, startDate, endDate) 
+    
+   return count
    
 }
 
@@ -51,18 +54,45 @@ for (line <- Source.fromFile(filename).getLines) {
 // 22300011
 
   
-def cleanJson2(jString: String): Int = {
-        implicit val formats = net.liftweb.json.DefaultFormats
-        val jValue = parse(jString)
-        var resultDoc = jValue.extract[Test]
-        resultDoc.data
-        resultDoc.meta
-        var r2 = resultDoc.meta.extract[Test1]
+def getTotalTweets(jString: String, key: String, startDate: Date, endDate: Date): Int = {
 
-        r2.totalTweetCount
-    }
+ implicit val formats = DefaultFormats
+val actualKey = key.toLowerCase 
+
+
+    val json = parse(jString)
+    val elements = (json \\ "date").children
+        val tags = (json \\ "Tags").children
+    var counter = 0
+var index = 0
+    for (acct <- elements) {
+      
+      breakable{
+          var m = acct.toString().replace("JField(date,JString(", "")
+          m = m.replace("))", "")
+          val tweetYear = m.substring(0, 4).toInt
+          val tweetMonth = m.substring(5, 7).toInt
+          val tweetDay = m.substring(8, 10).toInt
+
+          val tweetDate = new Date(tweetYear, tweetMonth, tweetDay)
+          if(tweetDate.before(startDate)) break()
+          if(tweetDate.after(endDate)) break()
+          if(tags(index).toString.toLowerCase.contains(actualKey) == false) break()
+         counter = counter + 1
+
+        
+      
+      }
+      index = index + 1
+  }
+        return counter
+
 }
-
+}
+case class Tweet(
+    date: String,
+    tags: List[String]
+)
 
 case class Test(data: net.liftweb.json.JArray, meta: net.liftweb.json.JValue)
 case class Test1(totalTweetCount: Int)
